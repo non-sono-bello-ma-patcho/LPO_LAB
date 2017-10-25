@@ -47,4 +47,10 @@ let rec ord_insert e l=
         else if h>e then e::h::t
         else h::ord_insert e t;;
 
-ord_insert 5 [1;2;3;4;6;7];;
+(*esercizio 9*)
+let rec ord_delete e l=
+  match l with
+    []->[]
+   | h::t -> if h=e then t
+      else if h>e then h::ord_delete e t
+      else h::t;;
