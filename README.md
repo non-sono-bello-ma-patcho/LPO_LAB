@@ -9,5 +9,6 @@ This repository contains all the projects for the **Object oriented Programming 
   - [labo3](ocaml/labo3.ml);
 
 ### 2. Java:
-  - [TimerClass](Java/TimerClass.java)
-  - [AnotherTimerClass](Java/AnotherTimerClass.java)
+  - [TimerClass](Java/timer/TimerClass.java) if you like that ticking noise;
+  - [PersonClass](Java/person/PersonClass.java) if you wanna play cupid;
+  - [CreditAccountClass](Java/credit_account/creditAccountClass.java) if you have no money but you wanna act like you have;
