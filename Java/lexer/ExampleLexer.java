@@ -1,4 +1,4 @@
-package lab05_12_04;
+//package lab05_12_04;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +16,7 @@ public class ExampleLexer {
 		if (args.length == 0)
 			throw new IllegalArgumentException();
 		// ([a-zA-Z]+)|([0-9]+)|(\\s+)
-		Matcher matcher = Pattern.compile("([a-zA-Z]+([a-zA-Z]|[0-9]|[_])*").matcher(args[0]);
+		Matcher matcher = Pattern.compile("([a-zA-Z][a-zA-Z0-9_]*)|(0(?![0-9])|[1-9][0-9]*)|(\\s+)|(\"+([^\\\\\"]|[\\\\(?=[\\\\\"])])*\"+)").matcher(args[0]);
 		System.out.println("Input: " + args[0]);
 		while (matcher.lookingAt()) {
 			System.out.print("Lexeme '" + matcher.group() + "'");
