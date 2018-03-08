@@ -22,28 +22,30 @@ public class Square extends AbstractShape {
 		checkPositive(side);
 		this.side = side;
 	}
+	@Override
 
 	public void move(double dx, double dy) {
 		center.move(dx, dy);
 	}
+	@Override
 
 	public void scale(double factor) {
 		checkPositive(factor);
 		side *= factor;
 	}
-
+	@Override
 	public Point getCenter() {
 		return new Point(center);
 	}
-
+	@Override
 	public double perimeter() {
 		return 4 * side;
 	}
-
+	@Override
 	public double area() {
 		return side * side;
 	}
-
+	@Override
 	public int compareTo(Shape shape) {
 		double thisArea = area(), shapeArea = shape.area();
 		return thisArea < shapeArea ? -1 : thisArea == shapeArea ? 0 : 1;

@@ -34,29 +34,31 @@ public class Rectangle extends AbstractShape {
 	public static Rectangle newOfWidthHeight(double width, double height, Point center) {
 		return new Rectangle(width, height, center);
 	}
+	@Override
 
 	public void move(double dx, double dy) {
 		center.move(dx, dy);
 	}
+	@Override
 
 	public void scale(double factor) {
 		checkPositive(factor);
 		width *= factor;
 		height *= factor;
 	}
-
+	@Override
 	public Point getCenter() {
 		return new Point(center);
 	}
-
+	@Override
 	public double perimeter() {
 		return 2 * (width + height);
 	}
-
+	@Override
 	public double area() {
 		return width * height;
 	}
-
+	@Override
 	public int compareTo(Shape shape) {
 		double thisArea = area(), shapeArea = shape.area();
 		return thisArea < shapeArea ? -1 : thisArea == shapeArea ? 0 : 1;
