@@ -10,21 +10,22 @@ class MapIterator<A, B> implements Iterator<B> {
 	private final Iterator<A> it;
 
 	public MapIterator(Function<A, B> fun, Iterator<A> it) {
-	    // completare
-		this.fun = fun;
 		this.it = it;
+		this.fun = fun;
 	}
 
 	@Override
 	public boolean hasNext() {
-	    // completare
-		
+
+		return it.hasNext();
 	}
 
 	@Override
 	public B next() {
-	    // completare
-		
-	}
+
+		if(!hasNext()) throw new RuntimeException();
+		return fun.apply(this.it.next());
+
+}
 
 }
