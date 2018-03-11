@@ -22,7 +22,13 @@ public class Range implements Iterable<Integer> {
 
 	@Override
 	public Iterator<Integer> iterator() {
-	    // completare usando la classe RangeIterator
+	  // completare usando la classe RangeIterator
+		
+		
+		return new RangeIterator(start,end);
+		
+		
+		/*
 		Iterator<Integer> it = new Iterator<Integer>() {
 
             private int currentIndex = start;
@@ -39,6 +45,7 @@ public class Range implements Iterable<Integer> {
 
         };
         return it;
+        */
 	}
 
 }
