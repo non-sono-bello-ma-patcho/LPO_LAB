@@ -1,4 +1,4 @@
-//package lab05_12_04;
+package labo05_12_04;//package lab05_12_04;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
