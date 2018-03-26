@@ -9,12 +9,14 @@ public class scannerTest {
 	public static void main(String[] args) {
 		
 		 try{
-			 Scanner sc = new Scanner (new File("C:\\Users\\alexs\\workspace\\lab9\\src\\lab9_lpo\\myFile.txt"));
+			 File myfile = new File("C:\\Users\\alexs\\workspace\\lab9\\src\\lab9_lpo\\myFile.txt");
+			 Scanner sc = new Scanner (myfile).useDelimiter("(\\W+)|(\\s+)");
 			 wordCount cc = new wordCount(sc);
 			 cc.PrintMap();
+			 sc.close();
 		 }catch(FileNotFoundException e){
 			e.printStackTrace();
-		}
+		 }
 		
 	}
 
