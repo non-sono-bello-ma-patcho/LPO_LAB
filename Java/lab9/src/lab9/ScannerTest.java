@@ -13,6 +13,7 @@ public class ScannerTest {
             Scanner sc = new Scanner (myfile).useDelimiter("(\\W+)|(\\s+)");
             wordCount cc = new wordCount(sc);
             cc.PrintMap();
+            for(String i : cc.sorted()) System.out.println(i);
             sc.close();
         }catch(FileNotFoundException e){
             e.printStackTrace();

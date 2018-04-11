@@ -1,7 +1,9 @@
 package lab9;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Scanner;
-//import java.io.FileNotFoundException;
 import java.util.HashMap;
+
 
 public class wordCount {
     private Scanner sc;
@@ -29,11 +31,16 @@ public class wordCount {
 
     public void PrintMap(){
         for (String  name: hs.keySet()){
-
             String key =name.toString();
             String value = hs.get(name).toString();
             System.out.println(key + " " + value);
         }
+    }
+
+    public String[] sorted(){
+        String[] arr = (String[])hs.keySet().toArray(new String[hs.keySet().size()]); // this instruction sucks.
+        Arrays.sort(arr);
+        return arr;
     }
 
 }
