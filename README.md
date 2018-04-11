@@ -5,10 +5,21 @@ This repository contains all the projects for the **Object oriented Programming 
 ## Project's List:
 ### 1. OCaml:
   - [labo1](ocaml/labo1.ml) contains a bunch of simple functions;
-  - [labo2](ocaml/labo2.ml);
-  - [labo3](ocaml/labo3.ml);
+  - [labo2](ocaml/labo2.ml) ;
+  - [labo3](ocaml/labo3.ml) ;
 
 ### 2. Java:
-  - [TimerClass](Java/timer/TimerClass.java) if you like that ticking noise;
-  - [PersonClass](Java/person/PersonClass.java) if you wanna play cupid;
-  - [CreditAccountClass](Java/credit_account/creditAccountClass.java) if you have no money but you wanna act like you have;
+  - #### Inheritance
+    - [TimerClass](Java/timer/TimerClass.java) if you like that ticking noise;
+    - [PersonClass](Java/person/PersonClass.java) if you wanna play cupid;
+    - [CreditAccountClass](Java/credit_account/creditAccountClass.java) if you have no money but you wanna act like you have;
+  
+  - ##### Pattern
+    - [Lexer]():
+  
+  - #### Iterator and Iterable
+    - [mapIterator]():
+    - [range]():
+  
+  - #### Input/Output and Decorators
+     - [wordCount]():
