@@ -128,7 +128,7 @@ public class StreamParser implements Parser {
 	private Exp parseMul() throws ParserException {
 		// to be completed
 		Exp exp = parseAtom();
-		while(tokenizer.tokenType() == TIMES){
+		while(tokenizer.tokenType() == TIMES){ //
 			tryNext();
 			exp = new Mul(exp, parseAtom());
 		}
@@ -159,12 +159,12 @@ public class StreamParser implements Parser {
 
 	private Ident parseIdent() throws ParserException {
 		// to be completed
-		return null; // to be modified
+		return new SimpleIdent(tokenizer.tokenString()); // to be modified
 	}
 
 	private Sign parseMinus() throws ParserException {
 		// to be completed
-		return null; // to be modified
+		return new Sign(tokenizer.); // to be modified
 	}
 
 	private ListLiteral parseList() throws ParserException {
