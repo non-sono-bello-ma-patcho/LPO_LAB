@@ -55,17 +55,17 @@ public class StreamParser implements Parser {
 		return prog;
 	}
 
-	private StmtSeq parseStmtSeq() throws ParserException {
+	private StmtSeq parseStmtSeq() throws ParserException { // recognize single instruction
 		// to be completed
 		return null; // to be modified
 	}
 
-	private ExpSeq parseExpSeq() throws ParserException {
+	private ExpSeq parseExpSeq() throws ParserException { // recognized expression sequence as 'int a = (10+221)'
 		// to be completed
 		Exp exp = parseExp();
 		while(tokenizer.tokenType() == EXP_SEP){
 			tryNext();
-			exp = (Exp) new MoreExp(exp, parseExpSeq());
+			exp = (Exp) new MoreExp(exp, parseExpSeq()); // return evaluation of current token [, parsed token]?
 		}
 		return (ExpSeq) exp; // to be modified
 	}
@@ -110,9 +110,9 @@ public class StreamParser implements Parser {
 		Exp exp = parseAdd();
 		while(tokenizer.tokenType() == PREFIX){
 			tryNext();
-			exp = new Prefix(exp, parseAdd());
+			exp = new Prefix(exp, parseAdd()); // returns evaluation of current token [ + parsed token]?
 		}
-		return exp; // to be modified
+		return exp; // to be modified -- final exp is an add expression;
 	}
 
 	private Exp parseAdd() throws ParserException {
@@ -122,7 +122,7 @@ public class StreamParser implements Parser {
 			tryNext();
 			exp = new Add(exp, parseMul());
 		}
-		return exp; // to be modified
+		return exp; // to be modified -- final exp is a mul expression;
 	}
 
 	private Exp parseMul() throws ParserException {
@@ -132,7 +132,7 @@ public class StreamParser implements Parser {
 			tryNext();
 			exp = new Mul(exp, parseAtom());
 		}
-		return exp; // to be modified
+		return exp; // to be modified -- final exp is an atom expression;
 	}
 
 	private Exp parseAtom() throws ParserException {
@@ -152,27 +152,27 @@ public class StreamParser implements Parser {
 		}
 	}
 
-	private IntLiteral parseNum() throws ParserException {
+	private IntLiteral parseNum() throws ParserException { // evaluate symbol as a number
 		// to be completed
 		return new IntLiteral(tokenizer.intValue()); // to be modified -- avrà senso?
 	}
 
-	private Ident parseIdent() throws ParserException {
+	private Ident parseIdent() throws ParserException { // evaluate symbol as indentation
 		// to be completed
 		return new SimpleIdent(tokenizer.tokenString()); // to be modified
 	}
 
-	private Sign parseMinus() throws ParserException {
+	private Sign parseMinus() throws ParserException { // evaluate symbol as a minus
 		// to be completed
 		return new Sign(tokenizer.); // to be modified
 	}
 
-	private ListLiteral parseList() throws ParserException {
+	private ListLiteral parseList() throws ParserException { // evaluate tokens as a list
 		// to be completed
 		return null; // to be modified
 	}
 
-	private Exp parseRoundPar() throws ParserException {
+	private Exp parseRoundPar() throws ParserException { // evaluate expression as round-parred expression
 		// to be completed
 		return null; // to be modified
 	}
