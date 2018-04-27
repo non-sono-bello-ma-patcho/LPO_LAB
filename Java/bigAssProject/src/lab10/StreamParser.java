@@ -61,7 +61,7 @@ public class StreamParser implements Parser {
 	}
 
 	private ExpSeq parseExpSeq() throws ParserException { // recognized expression sequence as 'int a = (10+221)'
-		// to be completed
+		// to be completednull
 		Exp exp = parseExp();
 		while(tokenizer.tokenType() == EXP_SEP){
 			tryNext();
@@ -154,27 +154,32 @@ public class StreamParser implements Parser {
 
 	private IntLiteral parseNum() throws ParserException { // evaluate symbol as a number
 		// to be completed
+		tryNext();
 		return new IntLiteral(tokenizer.intValue()); // to be modified -- avrà senso?
 	}
 
 	private Ident parseIdent() throws ParserException { // evaluate symbol as indentation
 		// to be completed
+		tryNext();
 		return new SimpleIdent(tokenizer.tokenString()); // to be modified
 	}
 
 	private Sign parseMinus() throws ParserException { // evaluate symbol as a minus
 		// to be completed
-		return new Sign(tokenizer.); // to be modified
+		tryNext();
+		return new Sign(parseAtom()); // to be modified
 	}
 
 	private ListLiteral parseList() throws ParserException { // evaluate tokens as a list
 		// to be completed
-		return null; // to be modified
+		tryNext();
+		return new ListLiteral(parseExpSeq()); // to be modified
 	}
 
 	private Exp parseRoundPar() throws ParserException { // evaluate expression as round-parred expression
 		// to be completed
-		return null; // to be modified
+		tryNext();
+		return parseExp(); // to be modified
 	}
 
 }
