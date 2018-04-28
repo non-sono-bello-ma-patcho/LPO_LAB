@@ -1,8 +1,8 @@
-package lab10;
+package lab10_04_24;
 
-import static lab10.TokenType.*;
+import static lab10_04_24.TokenType.*;
 
-import lab10.ast.*;
+import lab10_04_24.ast.*;
 
 /*
 Prog ::= StmtSeq 'EOF'
@@ -55,19 +55,24 @@ public class StreamParser implements Parser {
 		return prog;
 	}
 
-	private StmtSeq parseStmtSeq() throws ParserException { // recognize single instruction
+	private StmtSeq parseStmtSeq() throws ParserException { // recognize single instruction. testing phase
 		// to be completed
-		return null; // to be modified
+        Stmt temp = parseStmt();
+        while(tokenizer.tokenType() == STMT_SEP){
+            tryNext();
+            temp = (Stmt) new  MoreStmt(temp,parseStmtSeq());
+        }
+		return (StmtSeq) temp;
 	}
 
 	private ExpSeq parseExpSeq() throws ParserException { // recognized expression sequence as 'int a = (10+221)'
-		// to be completednull
-		Exp exp = parseExp();
-		while(tokenizer.tokenType() == EXP_SEP){
-			tryNext();
-			exp = (Exp) new MoreExp(exp, parseExpSeq()); // return evaluation of current token [, parsed token]?
-		}
-		return (ExpSeq) exp; // to be modified
+		// to be completed
+        Exp exp = parseExp();
+        while(tokenizer.tokenType() == EXP_SEP){
+            tryNext();
+            exp = (Exp) new MoreExp(exp, parseExpSeq()); // return evaluation of current token [, parsed token]?
+        }
+        return (ExpSeq) exp;
 	}
 
 	private Stmt parseStmt() throws ParserException {
@@ -85,54 +90,58 @@ public class StreamParser implements Parser {
 		}
 	}
 
-	private PrintStmt parsePrintStmt() throws ParserException {
+	private PrintStmt parsePrintStmt() throws ParserException { //testing phase
 		// to be completed
-		return null; // to be modified
+        tryNext();
+		return new PrintStmt(parseExp()); // to be modified
 	}
 
-	private VarStmt parseVarStmt() throws ParserException {
+	private VarStmt parseVarStmt() throws ParserException { //testing phase
 		// to be completed
-		return null; // to be modified
+        tryNext();
+		return new VarStmt(parseIdent(),parseExp()); // to be modified
 	}
 
-	private AssignStmt parseAssignStmt() throws ParserException {
+	private AssignStmt parseAssignStmt() throws ParserException { //testing phase
 		// to be completed
-		return null; // to be modified
+        tryNext();
+		return new AssignStmt(parseIdent(),parseExp()); // to be modified
 	}
 
-	private ForEachStmt parseForEachStmt() throws ParserException {
+	private ForEachStmt parseForEachStmt() throws ParserException { //testing phase
 		// to be completed
-		return null; // to be modified
+        tryNext();
+		return new ForEachStmt(parseIdent(),parseExp(),parseStmtSeq()); // to be modified
 	}
 
 	private Exp parseExp() throws ParserException {
 		// to be completed
-		Exp exp = parseAdd();
-		while(tokenizer.tokenType() == PREFIX){
-			tryNext();
-			exp = new Prefix(exp, parseAdd()); // returns evaluation of current token [ + parsed token]?
-		}
-		return exp; // to be modified -- final exp is an add expression;
+        Exp exp = parseAdd();
+        while(tokenizer.tokenType() == PREFIX){
+            tryNext();
+            exp = new Prefix(exp, parseAdd()); // returns evaluation of current token [ + parsed token]?
+        }
+        return exp; // to be modified -- final exp is an add expression;
 	}
 
 	private Exp parseAdd() throws ParserException {
 		// to be completed
-		Exp exp = parseMul();
-		while(tokenizer.tokenType() == PLUS){
-			tryNext();
-			exp = new Add(exp, parseMul());
-		}
-		return exp; // to be modified -- final exp is a mul expression;
+        Exp exp = parseMul();
+        while(tokenizer.tokenType() == PLUS){
+            tryNext();
+            exp = new Add(exp, parseMul());
+        }
+        return exp; // to be modified -- final exp is a mul expression;
 	}
 
 	private Exp parseMul() throws ParserException {
 		// to be completed
-		Exp exp = parseAtom();
-		while(tokenizer.tokenType() == TIMES){ //
-			tryNext();
-			exp = new Mul(exp, parseAtom());
-		}
-		return exp; // to be modified -- final exp is an atom expression;
+        Exp exp = parseAtom();
+        while(tokenizer.tokenType() == TIMES){ //
+            tryNext();
+            exp = new Mul(exp, parseAtom());
+        }
+        return exp; // to be modified -- final exp is an atom expression;
 	}
 
 	private Exp parseAtom() throws ParserException {
@@ -154,32 +163,29 @@ public class StreamParser implements Parser {
 
 	private IntLiteral parseNum() throws ParserException { // evaluate symbol as a number
 		// to be completed
-		tryNext();
-		return new IntLiteral(tokenizer.intValue()); // to be modified -- avrà senso?
+        tryNext();
+        return new IntLiteral(tokenizer.intValue()); // to be modified -- avrà senso? --> da errore con expr 9+2
 	}
 
 	private Ident parseIdent() throws ParserException { // evaluate symbol as indentation
 		// to be completed
-		tryNext();
-		return new SimpleIdent(tokenizer.tokenString()); // to be modified
+        tryNext();
+        return new SimpleIdent(tokenizer.tokenString());
 	}
 
 	private Sign parseMinus() throws ParserException { // evaluate symbol as a minus
-		// to be completed
-		tryNext();
-		return new Sign(parseAtom()); // to be modified
+        tryNext();
+        return new Sign(parseAtom());
 	}
 
-	private ListLiteral parseList() throws ParserException { // evaluate tokens as a list
-		// to be completed
-		tryNext();
-		return new ListLiteral(parseExpSeq()); // to be modified
+	private ListLiteral parseList() throws ParserException {// evaluate tokens as a list
+        tryNext();
+        return new ListLiteral(parseExpSeq());
 	}
 
 	private Exp parseRoundPar() throws ParserException { // evaluate expression as round-parred expression
-		// to be completed
-		tryNext();
-		return parseExp(); // to be modified
+        tryNext();
+        return parseExp();
 	}
 
 }
