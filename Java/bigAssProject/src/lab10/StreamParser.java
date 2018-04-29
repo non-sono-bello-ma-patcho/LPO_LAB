@@ -167,19 +167,25 @@ public class StreamParser implements Parser {
 	private Sign parseMinus() throws ParserException { // evaluate symbol as a minus
 		// to be completed
 		tryNext();
+		consume(MINUS);
 		return new Sign(parseAtom()); // to be modified
 	}
 
 	private ListLiteral parseList() throws ParserException { // evaluate tokens as a list
 		// to be completed
 		tryNext();
-		return new ListLiteral(parseExpSeq()); // to be modified
+		consume(OPEN_LIST);
+		ExpSeq es = parseExpSeq();
+		consume(CLOSE_LIST);
+		return new ListLiteral(es); // to be modified
 	}
 
 	private Exp parseRoundPar() throws ParserException { // evaluate expression as round-parred expression
 		// to be completed
 		tryNext();
-		return parseExp(); // to be modified
+		consume(OPEN_PAR);
+		Exp exp = parseExp();
+		consume(CLOSE_PAR);
+		return exp;// to be modified
 	}
-
 }
