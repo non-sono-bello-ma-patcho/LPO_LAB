@@ -55,137 +55,154 @@ public class StreamParser implements Parser {
 		return prog;
 	}
 
-	private StmtSeq parseStmtSeq() throws ParserException { // recognize single instruction
-		// to be completed
-		return null; // to be modified
+	private StmtSeq parseStmtSeq() throws ParserException { //parse a stmts sequence -->  Stmt (';' StmtSeq)?
+		Stmt stmt= parseStmt(); // there will be at least one stmt Take a look to the regular expression!
+		if(tokenizer.tokenType()==STMT_SEP)  // if the next token is ';'
+		{
+			tryNext(); // goes to the next token
+			StmtSeq stmtseq=new MoreStmt(stmt,parseStmtSeq()); // will be a sequences of multiple stmts
+			return stmtseq;
+		}
+		return new SingleStmt(stmt); // there is only one stmt
 	}
 
-	private ExpSeq parseExpSeq() throws ParserException { // recognized expression sequence as 'int a = (10+221)'
-		// to be completednull
-		Exp exp = parseExp();
-		while(tokenizer.tokenType() == EXP_SEP){
-			tryNext();
-			exp = (Exp) new MoreExp(exp, parseExpSeq()); // return evaluation of current token [, parsed token]?
+	private ExpSeq parseExpSeq() throws ParserException { // parse exprseq --> Exp (',' ExpSeq)?
+		Exp exp= parseExp(); //// there will be at least one  expression! Take a look to the regular expression!
+		if(tokenizer.tokenType()==EXP_SEP) // if the next token is ','
+		{
+			tryNext(); // goes to the next token
+			ExpSeq expseq=new MoreExp(exp,parseExpSeq()); //will be a sequences of multiple expressions
+			return expseq;
 		}
-		return (ExpSeq) exp; // to be modified
+		return new SingleExp(exp); // there is only one expression
 	}
 
 	private Stmt parseStmt() throws ParserException {
 		switch (tokenizer.tokenType()) {
-		default:
-			unexpectedTokenError();
-		case PRINT:
-			return parsePrintStmt();
-		case VAR:
-			return parseVarStmt();
-		case IDENT:
-			return parseAssignStmt();
-		case FOR:
-			return parseForEachStmt();
+			default:
+				unexpectedTokenError();
+			case PRINT:
+				return parsePrintStmt();
+			case VAR:
+				return parseVarStmt();
+			case IDENT:
+				return parseAssignStmt();
+			case FOR:
+				return parseForEachStmt();
 		}
 	}
 
-	private PrintStmt parsePrintStmt() throws ParserException {
-		// to be completed
-		return null; // to be modified
+	private PrintStmt parsePrintStmt() throws ParserException { // parse print stmt --> 'print' Exp
+		consume(PRINT); //check if the token in 'PRINT' , if it is, trynext() will be called, otherwise throws ParserEexception
+		Exp exp= parseExp(); // creates a new expression
+		return new PrintStmt(exp);
 	}
 
-	private VarStmt parseVarStmt() throws ParserException {
-		// to be completed
-		return null; // to be modified
+	private VarStmt parseVarStmt() throws ParserException { // parse the assignment stmt --> 'var'? ID '=' Exp
+		consume(VAR); //check if the token in 'VAR' , if it is, trynext() will be called, otherwise throws ParserEexception
+		Ident id=parseIdent(); // creates a new id
+		consume(ASSIGN); //check if the token in '=' , if it is, trynext() will be called, otherwise throws ParserEexception
+		Exp exp=parseExp();// creates a new expression
+		return new VarStmt(id,exp);
 	}
 
-	private AssignStmt parseAssignStmt() throws ParserException {
-		// to be completed
-		return null; // to be modified
+
+	private AssignStmt parseAssignStmt() throws ParserException { // parse the assignment stmt --> 'var'? ID '=' Exp
+		Ident id=parseIdent(); // creates a new id object
+		consume(ASSIGN); //check if the token in '=' , if it is, trynext() will be called, otherwise throws ParserEexception
+		Exp exp=parseExp();//creates a new expression
+		return new AssignStmt(id,exp);
 	}
 
-	private ForEachStmt parseForEachStmt() throws ParserException {
-		// to be completed
-		return null; // to be modified
+	private ForEachStmt parseForEachStmt() throws ParserException { //parse FOR stmt --> FOR ID : EXPR { EXPRSEQ }
+		consume(FOR); //check if the token in "FOR", if it is, trynext() will be called, otherwise throws ParserEexception
+		Ident id=parseIdent(); // creates a new id! (trynext() or an exception)
+		consume(IN); //check if the token in ':' , if it is, trynext() will be called, otherwise throws ParserEexception
+		Exp exp=parseExp();// creates a new expr!
+		consume(OPEN_BLOCK); //check if the token in '{' , if it is, trynext() will be called, otherwise throws ParserEexception
+		StmtSeq stmt=parseStmtSeq(); //cretes a new stmtseq!
+		consume(CLOSE_BLOCK); // check if the token in '}' , if it is, trynext() will be called, otherwise throws ParserEexception
+		return new ForEachStmt(id,exp,stmt);
 	}
 
-	private Exp parseExp() throws ParserException {
-		// to be completed
-		Exp exp = parseAdd();
-		while(tokenizer.tokenType() == PREFIX){
-			tryNext();
-			exp = new Prefix(exp, parseAdd()); // returns evaluation of current token [ + parsed token]?
+	private Exp parseExp() throws ParserException { //parse the expression --> add ( '::' expr)?
+		Exp exp= parseAdd(); // there will be at least one Add expression! Take a look to the regular expression!
+		if(tokenizer.tokenType()==PREFIX) //if there is '::' after te add expression
+		{
+			tryNext(); //goes to the next token
+			exp=new Prefix(exp,parseExp());
 		}
-		return exp; // to be modified -- final exp is an add expression;
+		return exp;
 	}
 
-	private Exp parseAdd() throws ParserException {
-		// to be completed
-		Exp exp = parseMul();
-		while(tokenizer.tokenType() == PLUS){
-			tryNext();
-			exp = new Add(exp, parseMul());
+	private Exp parseAdd() throws ParserException { // parse add --> Mul ( '+' MUl)*
+		Exp exp= parseMul(); // there will be at least one Mul expression! Take a look to the regular expression!
+		while(tokenizer.tokenType()==PLUS) //while the token is "*" keep looping
+		{
+			tryNext(); // goes to the next token
+			exp=new Add(exp,parseMul()); // exp will be Mul + Mul (and so on...)
 		}
-		return exp; // to be modified -- final exp is a mul expression;
+		return exp;
 	}
 
-	private Exp parseMul() throws ParserException {
-		// to be completed
-		Exp exp = parseAtom();
-		while(tokenizer.tokenType() == TIMES){ //
-			tryNext();
-			exp = new Mul(exp, parseAtom());
+	private Exp parseMul() throws ParserException { // parse mul --> atomic expression  ( '*' atomic expression )*
+		Exp exp= parseAtom(); //there will be at least one atomic expression! take a look to the regular expression!
+		while(tokenizer.tokenType()==TIMES) //while the token is "*" keep looping
+		{
+			tryNext(); //goes to the next token
+			exp=new Mul(exp,parseMul()); // exp  will be atom * atom ( and so on..)
 		}
-		return exp; // to be modified -- final exp is an atom expression;
+		return exp;
 	}
 
 	private Exp parseAtom() throws ParserException {
 		switch (tokenizer.tokenType()) {
-		default:
-			unexpectedTokenError();
-		case NUM:
-			return parseNum();
-		case IDENT:
-			return parseIdent();
-		case MINUS:
-			return parseMinus();
-		case OPEN_LIST:
-			return parseList();
-		case OPEN_PAR:
-			return parseRoundPar();
+			default:
+				unexpectedTokenError();
+			case NUM:
+				return parseNum();
+			case IDENT:
+				return parseIdent();
+			case MINUS:
+				return parseMinus();
+			case OPEN_LIST:
+				return parseList();
+			case OPEN_PAR:
+				return parseRoundPar();
 		}
 	}
 
-	private IntLiteral parseNum() throws ParserException { // evaluate symbol as a number
-		// to be completed
-		tryNext();
-		return new IntLiteral(tokenizer.intValue()); // to be modified -- avrà senso?
+	private IntLiteral parseNum() throws ParserException {
+		int n=tokenizer.intValue(); // if  the token is not NUM throws a ParserExeption otherwise n = tokenizer.intValue
+		IntLiteral intlit=new IntLiteral(n);
+		tryNext(); // obviously goes to the next token
+		return intlit;
 	}
 
-	private Ident parseIdent() throws ParserException { // evaluate symbol as indentation
-		// to be completed
-		tryNext();
-		return new SimpleIdent(tokenizer.tokenString()); // to be modified
+	private Ident parseIdent() throws ParserException { //parse easly the ids (name of variables)
+		String s= tokenizer.tokenString(); //s = the string rappresenting the id (if s = null an exception will be raised)
+		Ident ident= new SimpleIdent(s); //putting it in a new id object
+		tryNext(); //obviously goes to the next token
+		return ident;
 	}
 
-	private Sign parseMinus() throws ParserException { // evaluate symbol as a minus
-		// to be completed
-		tryNext();
-		consume(MINUS);
-		return new Sign(parseAtom()); // to be modified
+	private Sign parseMinus() throws ParserException { //parse  "-" atomic expression --> -NUM | -[ exprseq] | -(expr) | -ID
+		consume(MINUS); //if there is a "-" trynext() otherwise throws a syntax exception (ParserExeption)
+		Exp atom=parseAtom(); //parse the atomic expression
+		return new Sign(atom);
 	}
 
-	private ListLiteral parseList() throws ParserException { // evaluate tokens as a list
-		// to be completed
-		tryNext();
-		consume(OPEN_LIST);
-		ExpSeq es = parseExpSeq();
-		consume(CLOSE_LIST);
-		return new ListLiteral(es); // to be modified
+	private ListLiteral parseList() throws ParserException { //parse a list --> [expr,expr,expr] --> "[" ExprSeq "]"
+		consume(OPEN_LIST); //if there is a "[" trynext() otherwise throws a syntax exception (ParserExeption)
+		ExpSeq list=parseExpSeq(); //parse the exprSeq that is between the square pars
+		consume(CLOSE_LIST); //if there is a "]" trynext() otherwise throws a syntax exception (ParserExeption)
+		return new ListLiteral(list);
 	}
 
-	private Exp parseRoundPar() throws ParserException { // evaluate expression as round-parred expression
-		// to be completed
-		tryNext();
-		consume(OPEN_PAR);
-		Exp exp = parseExp();
-		consume(CLOSE_PAR);
-		return exp;// to be modified
+	private Exp parseRoundPar() throws ParserException { //parse a round par --> "(" expr ")"
+		consume(OPEN_PAR); //if there is a "(" trynext() otherwise throws a syntax exception (ParserExeption)
+		Exp exp=parseExp(); // parse the expr that is between the pars
+		consume(CLOSE_PAR);//if there is a ")" trynext() otherwise throws a syntax exception (ParserExeption)
+		return exp;
 	}
 }
