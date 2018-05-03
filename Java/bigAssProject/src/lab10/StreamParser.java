@@ -57,17 +57,22 @@ public class StreamParser implements Parser {
 
 	private StmtSeq parseStmtSeq() throws ParserException { // recognize single instruction
 		// to be completed
-		return null; // to be modified
+        Stmt stmt = parseStmt();
+        if(tokenizer.tokenType() == STMT_SEP){
+            consume(STMT_SEP);
+            return new MoreStmt(stmt, parseStmtSeq()); // recursive call in order to manage multiple statement programs...
+        }
+		return new SingleStmt(stmt); // to be modified
 	}
 
 	private ExpSeq parseExpSeq() throws ParserException { // recognized expression sequence as 'int a = (10+221)'
-		// to be completednull
+		// to be completed
 		Exp exp = parseExp();
-		while(tokenizer.tokenType() == EXP_SEP){
+		if(tokenizer.tokenType() == EXP_SEP){
 			tryNext();
-			exp = (Exp) new MoreExp(exp, parseExpSeq()); // return evaluation of current token [, parsed token]?
+			return new MoreExp(exp, parseExpSeq()); // return evaluation of current token [, parsed token]?
 		}
-		return (ExpSeq) exp; // to be modified
+		return new SingleExp(exp); // to be modified
 	}
 
 	private Stmt parseStmt() throws ParserException {
@@ -87,22 +92,37 @@ public class StreamParser implements Parser {
 
 	private PrintStmt parsePrintStmt() throws ParserException {
 		// to be completed
-		return null; // to be modified
+		consume(PRINT); // I could use tryNext();
+		return new PrintStmt(parseExp()); // to be modified
 	}
 
 	private VarStmt parseVarStmt() throws ParserException {
 		// to be completed
-		return null; // to be modified
+        consume(VAR); // consume 'var'
+        Ident ID = parseIdent();
+        consume(ASSIGN); // consume '='
+        Exp e = parseExp();
+		return new VarStmt(ID, e); // to be modified
 	}
 
 	private AssignStmt parseAssignStmt() throws ParserException {
 		// to be completed
-		return null; // to be modified
+        Ident id = parseIdent();
+        consume(ASSIGN); // tryNext();
+        Exp e = parseExp();
+		return new AssignStmt(id, e); // to be modified
 	}
 
 	private ForEachStmt parseForEachStmt() throws ParserException {
 		// to be completed
-		return null; // to be modified
+        consume(FOR);
+        Ident id = parseIdent();
+        consume(IN);
+        Exp e = parseExp();
+        consume(OPEN_BLOCK);
+        StmtSeq stmt = parseStmtSeq();
+        consume(CLOSE_BLOCK);
+		return new ForEachStmt(id, e, stmt); // to be modified
 	}
 
 	private Exp parseExp() throws ParserException {
@@ -110,7 +130,7 @@ public class StreamParser implements Parser {
 		Exp exp = parseAdd();
 		while(tokenizer.tokenType() == PREFIX){
 			tryNext();
-			exp = new Prefix(exp, parseAdd()); // returns evaluation of current token [ + parsed token]?
+			exp = new Prefix(exp, parseExp()); // we're expecting Exp after '::'...
 		}
 		return exp; // to be modified -- final exp is an add expression;
 	}
@@ -154,26 +174,26 @@ public class StreamParser implements Parser {
 
 	private IntLiteral parseNum() throws ParserException { // evaluate symbol as a number
 		// to be completed
-		tryNext();
-		return new IntLiteral(tokenizer.intValue()); // to be modified -- avrà senso?
+        int n = tokenizer.intValue();
+		consume(NUM);
+		return new IntLiteral(n); // to be modified -- avrà senso?
 	}
 
 	private Ident parseIdent() throws ParserException { // evaluate symbol as indentation
 		// to be completed
-		tryNext();
-		return new SimpleIdent(tokenizer.tokenString()); // to be modified
+        String id = tokenizer.tokenString();
+		consume(IDENT);
+		return new SimpleIdent(id); // to be modified
 	}
 
 	private Sign parseMinus() throws ParserException { // evaluate symbol as a minus
 		// to be completed
-		tryNext();
 		consume(MINUS);
 		return new Sign(parseAtom()); // to be modified
 	}
 
 	private ListLiteral parseList() throws ParserException { // evaluate tokens as a list
 		// to be completed
-		tryNext();
 		consume(OPEN_LIST);
 		ExpSeq es = parseExpSeq();
 		consume(CLOSE_LIST);
@@ -182,7 +202,6 @@ public class StreamParser implements Parser {
 
 	private Exp parseRoundPar() throws ParserException { // evaluate expression as round-parred expression
 		// to be completed
-		tryNext();
 		consume(OPEN_PAR);
 		Exp exp = parseExp();
 		consume(CLOSE_PAR);
